@@ -7,7 +7,7 @@ const generateToken = (id) => {
     // process.env.JWT_SECRET -> Gizli anahtar, JWT'nin imzalanmasında kullanılır. Bu değer çevre değişkenlerinden alınır.
     // { expiresIn: "3d" } -> Tokenın geçerlilik süresini belirler. Bu örnekte token 3 gün boyunca geçerli olacaktır. 
     // 7d -> 1 hafta, 30d -> 1 ay, 365d -> 1 yıl geçerli demek
-    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "365d" });
+    return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: "1d" });
 };
 
 module.exports = { generateToken };
