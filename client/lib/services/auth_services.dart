@@ -5,7 +5,7 @@ import 'package:elegan/core/env/env.dart';
 import 'package:elegan/core/error/error.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+//import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
   void login({
@@ -13,7 +13,7 @@ class AuthService {
     required String email,
     required String password,
   }) async {
-    final currentContext = context;
+    //final currentContext = context;
 
     try {
       http.Response res = await http.post(
@@ -31,10 +31,10 @@ class AuthService {
           response: res,
           context: context,
           onSuccess: () async {
-            SharedPreferences pref = await SharedPreferences.getInstance();
+            //SharedPreferences pref = await SharedPreferences.getInstance();
           });
     } catch (e) {
-      print(e);
+      //print(e);
     }
   }
 }
