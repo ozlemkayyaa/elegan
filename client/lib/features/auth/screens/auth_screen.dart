@@ -207,7 +207,7 @@ class _AuthScreenState extends State<AuthScreen> {
           // Ad alanı
           CustomTextField(
             controller: _nameController,
-            hintText: EleganTexts.name,
+            hintText: EleganTexts.firstName,
             prefixIcon: const Icon(CupertinoIcons.person),
           ),
           const SizedBox(height: 20),

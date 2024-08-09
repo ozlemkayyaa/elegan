@@ -2,23 +2,28 @@ import 'dart:convert';
 import 'package:elegan/core/helpers/helper_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:elegan/models/auth_response.dart';
 
-void httpErrorHandle({
+Future<AuthResponse> httpErrorHandle({
   required http.Response response,
   required BuildContext context,
-  required VoidCallback onSuccess,
-}) {
+  required Future<AuthResponse> Function() onSuccess,
+}) async {
   switch (response.statusCode) {
     case 200:
-      onSuccess();
-      break;
+      // Başarılı durumda, onSuccess fonksiyonu çağrılıyor.
+      return await onSuccess();
     case 400:
-      showSnackBar(context, jsonDecode(response.body)['msg']);
-      break;
+      final message = jsonDecode(response.body)['msg'];
+      showSnackBar(context, message);
+      return AuthResponse.failure(error: message);
     case 500:
-      showSnackBar(context, jsonDecode(response.body)['error']);
-      break;
+      final message = jsonDecode(response.body)['error'];
+      showSnackBar(context, message);
+      return AuthResponse.failure(error: message);
     default:
-      showSnackBar(context, response.body);
+      final message = response.body;
+      showSnackBar(context, message);
+      return AuthResponse.failure(error: message);
   }
 }

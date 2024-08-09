@@ -4,7 +4,9 @@ class EleganTexts {
   static const String loginButton = 'Login';
   static const String loginMessage = 'Enter your Credential to log in.';
   static const String registerButton = 'Complete Registeration';
-  static const String name = 'Name';
+  static const String firstName = 'First Name';
+  static const String lastName = 'Last Name';
+  static const String mobile = 'Phone Number';
   static const String email = 'Email Address';
   static const String password = 'Password';
   static const String confirmPassword = 'Confirm Password';
