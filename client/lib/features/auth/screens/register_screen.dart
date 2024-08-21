@@ -1,15 +1,18 @@
-// ignore_for_file: library_private_types_in_public_api
+// ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:elegan/blocs/auth/auth_bloc.dart';
+import 'package:elegan/blocs/auth/auth_event.dart';
 import 'package:elegan/blocs/auth/auth_state.dart';
 import 'package:elegan/core/common/bottom_bar.dart';
 import 'package:elegan/core/common/custom_button.dart';
 import 'package:elegan/core/common/custom_textfield.dart';
 import 'package:elegan/core/constants/sizes.dart';
 import 'package:elegan/core/constants/texts.dart';
+import 'package:elegan/core/helpers/helper_functions.dart';
 import 'package:elegan/features/auth/screens/login_screen.dart';
 import 'package:elegan/features/auth/widgets/sub_message.dart';
 import 'package:elegan/features/auth/widgets/top_message.dart';
+import 'package:elegan/services/auth_services.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -23,6 +26,8 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
+  final AuthService authService = AuthService();
+
   final _registerFormKey = GlobalKey<FormState>();
 
   late final TextEditingController _emailController;
@@ -60,7 +65,18 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void registerUser() {}
+  void registerUser(BuildContext context) {
+    if (_registerFormKey.currentState!.validate()) {
+      BlocProvider.of<AuthBloc>(context).add(RegisterEvent(
+        mobile: _mobileController.text,
+        context: context,
+        firstName: _firstNameController.text,
+        lastName: _lastNameController.text,
+        email: _emailController.text,
+        password: _passwordController.text,
+      ));
+    }
+  }
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
@@ -68,38 +84,52 @@ class _RegisterScreenState extends State<RegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocBuilder<AuthBloc, AuthState>(
-        builder: (context, state) {
-          if (state is SuccessAuthState) {
-            return const BottomBarScreen();
-          } else {
-            return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(EleganSizes.margin),
-                child: SingleChildScrollView(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 50),
-                      const TopMessage(
-                        welcomeText: EleganTexts.join,
-                        messageText: EleganTexts.personalInfo,
-                      ),
-                      const SizedBox(height: 30),
-                      registerForm(context),
-                      const SizedBox(height: 150),
-                      const SubMessage(
-                        account: EleganTexts.account,
-                        buttonText: EleganTexts.signin,
-                        routeName: LoginScreen.routeName,
-                      ),
-                    ],
-                  ),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(EleganSizes.margin),
+          child: BlocConsumer<AuthBloc, AuthState>(
+            listener: (context, state) {
+              if (state is FailureAuthState) {
+                showSnackBar(context, state.error);
+              } else if (state is SuccessAuthState) {
+                print('Navigating to BottomBarScreen');
+                showSnackBar(
+                  context,
+                  "Giriş Başarili!",
+                );
+                Navigator.pushNamed(context, BottomBarScreen.routeName);
+              }
+            },
+            builder: (context, state) {
+              if (state is LoadingAuthState) {
+                return const Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 50),
+                    const TopMessage(
+                      welcomeText: EleganTexts.join,
+                      messageText: EleganTexts.personalInfo,
+                    ),
+                    const SizedBox(height: 30),
+                    registerForm(context),
+                    const SizedBox(height: 150),
+                    const SubMessage(
+                      account: EleganTexts.account,
+                      buttonText: EleganTexts.signin,
+                      routeName: LoginScreen.routeName,
+                    ),
+                  ],
                 ),
-              ),
-            );
-          }
-        },
+              );
+            },
+          ),
+        ),
       ),
     );
   }
@@ -200,8 +230,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
             text: EleganTexts.registerButton,
             onPressed: () {
               if (_registerFormKey.currentState!.validate()) {
-                registerUser();
-                Navigator.pushNamed(context, BottomBarScreen.routeName);
+                registerUser(context);
               }
             },
           ),

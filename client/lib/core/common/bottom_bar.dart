@@ -14,7 +14,7 @@ class _BottomBarScreenState extends State<BottomBarScreen> {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: Text("Bottom Bar"),
+      body: Center(child: Text("Bottom Bar")),
     );
   }
 }

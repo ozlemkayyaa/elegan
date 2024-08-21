@@ -2,9 +2,7 @@
 
 import 'package:elegan/models/user.dart';
 
-abstract class AuthState {
-  AuthState();
-}
+abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
 

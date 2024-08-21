@@ -1,6 +1,7 @@
 // ignore_for_file: library_private_types_in_public_api, avoid_print
 
 import 'package:elegan/blocs/auth/auth_bloc.dart';
+import 'package:elegan/blocs/auth/auth_event.dart';
 import 'package:elegan/blocs/auth/auth_state.dart';
 import 'package:elegan/core/common/bottom_bar.dart';
 import 'package:elegan/core/common/custom_button.dart';
@@ -49,12 +50,16 @@ class _LoginScreenState extends State<LoginScreen> {
     super.dispose();
   }
 
-  void loginUser() {
-    authService.login(
-      context: context,
-      email: _emailController.text,
-      password: _passwordController.text,
-    );
+  void loginUser(BuildContext context) {
+    if (_loginFormKey.currentState!.validate()) {
+      BlocProvider.of<AuthBloc>(context).add(
+        LoginEvent(
+          context: context,
+          email: _emailController.text,
+          password: _passwordController.text,
+        ),
+      );
+    }
   }
 
   bool _obscurePassword = true;
@@ -164,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
             text: EleganTexts.loginButton,
             onPressed: () {
               if (_loginFormKey.currentState!.validate()) {
-                loginUser();
+                loginUser(context);
               }
             },
           ),

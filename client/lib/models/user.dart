@@ -5,6 +5,7 @@ class User {
   final String id;
   final String firstName;
   final String lastName;
+  final String password;
   final String email;
   final String mobile;
   final String role;
@@ -19,6 +20,7 @@ class User {
     required this.id,
     required this.firstName,
     required this.lastName,
+    required this.password,
     required this.email,
     required this.mobile,
     required this.role,
@@ -36,6 +38,7 @@ class User {
       '_id': id,
       'firstName': firstName,
       'lastName': lastName,
+      'password': password,
       'email': email,
       'mobile': mobile,
       'role': role,
@@ -54,6 +57,7 @@ class User {
       id: map['_id'] ?? '',
       firstName: map['firstName'] ?? '',
       lastName: map['lastName'] ?? '',
+      password: map['password'] ?? '',
       email: map['email'] ?? '',
       mobile: map['mobile'] ?? '',
       role: map['role'] ?? 'user',
@@ -77,6 +81,7 @@ class User {
     String? id,
     String? firstName,
     String? lastName,
+    String? password,
     String? email,
     String? mobile,
     String? role,
@@ -91,6 +96,7 @@ class User {
       id: id ?? this.id,
       firstName: firstName ?? this.firstName,
       lastName: lastName ?? this.lastName,
+      password: password ?? this.password,
       email: email ?? this.email,
       mobile: mobile ?? this.mobile,
       role: role ?? this.role,

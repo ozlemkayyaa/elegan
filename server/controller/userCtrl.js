@@ -8,13 +8,25 @@ const jwt = require("jsonwebtoken");
 // Create A User
 const createUser = asyncHandler(async (req,res) => {
     // Veritabanında bu e-posta adresine sahip bir kullanıcı olup olmadığını kontrol eder.
-    const email = req.body.email;
-    const findUser = await User.findOne({email: email});
+    const { firstName, lastName, email, password, mobile } = req.body;
+    //const email = req.body.email;
+    const findUser = await User.findOne({email});
+    // Kullanıcı varsa
+    if (findUser) {
+        return res.status(400).json({ msg: "User with same email already exists!" });
+    }
     // Kullanıcı bulunamadıysa
     if(!findUser) {
         // Yeni kullanıcı oluştur
-        const newUser = await User.create(req.body);
-        res.json(newUser);
+        let user = new User({
+            firstName,
+            lastName,
+            email,
+            password,
+            mobile,
+        });
+        user = await user.save();
+        res.json(user);
     } else {
         throw new Error("User Already Exists");
     }

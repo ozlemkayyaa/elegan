@@ -2,7 +2,9 @@
 
 import 'package:elegan/blocs/auth/auth_event.dart';
 import 'package:elegan/blocs/auth/auth_state.dart';
+import 'package:elegan/core/common/bottom_bar.dart';
 import 'package:elegan/services/auth_services.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
@@ -22,8 +24,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         email: event.email,
         password: event.password,
       );
+
       if (response.isSuccess == true) {
-        emit(SuccessAuthState(user: response.user!));
+        if (response.user != null) {
+          emit(SuccessAuthState(user: response.user!));
+          Navigator.pushReplacementNamed(
+              event.context, BottomBarScreen.routeName);
+        } else {
+          emit(FailureAuthState(error: 'User data is null'));
+        }
       } else {
         emit(FailureAuthState(error: response.error ?? 'Login failed'));
       }
@@ -33,7 +42,27 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _register(RegisterEvent event, Emitter<AuthState> emit) async {
-    try {} catch (e) {
+    try {
+      final res = await _authService.register(
+        context: event.context,
+        firstName: event.firstName,
+        lastName: event.lastName,
+        email: event.email,
+        password: event.password,
+        mobile: event.mobile,
+      );
+      if (res.isSuccess == true) {
+        if (res.user != null) {
+          emit(SuccessAuthState(user: res.user!));
+          Navigator.pushReplacementNamed(
+              event.context, BottomBarScreen.routeName);
+        } else {
+          emit(FailureAuthState(error: 'User data is null'));
+        }
+      } else {
+        emit(FailureAuthState(error: res.error ?? 'Register Failed'));
+      }
+    } catch (e) {
       emit(FailureAuthState(error: e.toString()));
     }
   }
@@ -46,7 +75,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _logout(LogOutEvent event, Emitter<AuthState> emit) async {
-    try {} catch (e) {
+    try {
+      //await _authService.logout(event.context);
+      //emit(LogOutState());
+      // Navigator.pushReplacementNamed(event.context, LoginScreen.routeName);
+    } catch (e) {
       emit(FailureAuthState(error: e.toString()));
     }
   }
