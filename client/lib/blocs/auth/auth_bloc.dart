@@ -17,7 +17,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   }
 
   Future<void> _login(LoginEvent event, Emitter<AuthState> emit) async {
-    emit(LoadingAuthState());
+    emit(AuthLoading());
     try {
       final response = await _authService.login(
         context: event.context,
@@ -27,21 +27,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       if (response.isSuccess == true) {
         if (response.user != null) {
-          emit(SuccessAuthState(user: response.user!));
+          await _authService.saveUserData(response.token!, response.user!);
+          emit(Authenticated(user: response.user!));
           Navigator.pushReplacementNamed(
               event.context, BottomBarScreen.routeName);
         } else {
-          emit(FailureAuthState(error: 'User data is null'));
+          emit(NotAuthenticated(
+              errorMessage: response.error ?? 'Login Failed!'));
         }
       } else {
-        emit(FailureAuthState(error: response.error ?? 'Login failed'));
+        emit(AuthError(error: 'User data is null'));
       }
     } catch (e) {
-      emit(FailureAuthState(error: e.toString()));
+      emit(AuthError(error: e.toString()));
     }
   }
 
   Future<void> _register(RegisterEvent event, Emitter<AuthState> emit) async {
+    emit(AuthLoading());
     try {
       final res = await _authService.register(
         context: event.context,
@@ -53,24 +56,24 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       );
       if (res.isSuccess == true) {
         if (res.user != null) {
-          emit(SuccessAuthState(user: res.user!));
+          emit(Authenticated(user: res.user!));
           Navigator.pushReplacementNamed(
               event.context, BottomBarScreen.routeName);
         } else {
-          emit(FailureAuthState(error: 'User data is null'));
+          emit(NotAuthenticated(errorMessage: res.error ?? 'Register Failed'));
         }
       } else {
-        emit(FailureAuthState(error: res.error ?? 'Register Failed'));
+        emit(AuthError(error: 'User data is null'));
       }
     } catch (e) {
-      emit(FailureAuthState(error: e.toString()));
+      emit(AuthError(error: e.toString()));
     }
   }
 
   Future<void> _checkingLogin(
       CheckLoginEvent event, Emitter<AuthState> emit) async {
     try {} catch (e) {
-      emit(FailureAuthState(error: e.toString()));
+      emit(AuthError(error: e.toString()));
     }
   }
 
@@ -80,7 +83,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       //emit(LogOutState());
       // Navigator.pushReplacementNamed(event.context, LoginScreen.routeName);
     } catch (e) {
-      emit(FailureAuthState(error: e.toString()));
+      emit(AuthError(error: e.toString()));
     }
   }
 }

@@ -4,13 +4,13 @@ abstract class UserState {}
 
 class UserInitial extends UserState {}
 
+class UserLoadingState extends UserState {}
+
 class UserSuccessState extends UserState {
   final User user;
 
   UserSuccessState({required this.user});
 }
-
-class UserLoadingState extends UserState {}
 
 class UserErrorState extends UserState {
   final String error;
@@ -21,3 +21,15 @@ class UserErrorState extends UserState {
 class UserUpdated extends UserState {}
 
 class UserDeleted extends UserState {}
+
+class UserBlocked extends UserState {
+  final String userId;
+
+  UserBlocked({required this.userId});
+}
+
+class UserUnblocked extends UserState {
+  final String userId;
+
+  UserUnblocked({required this.userId});
+}

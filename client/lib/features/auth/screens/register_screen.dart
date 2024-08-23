@@ -3,7 +3,6 @@
 import 'package:elegan/blocs/auth/auth_bloc.dart';
 import 'package:elegan/blocs/auth/auth_event.dart';
 import 'package:elegan/blocs/auth/auth_state.dart';
-import 'package:elegan/core/common/bottom_bar.dart';
 import 'package:elegan/core/common/custom_button.dart';
 import 'package:elegan/core/common/custom_textfield.dart';
 import 'package:elegan/core/constants/sizes.dart';
@@ -89,19 +88,14 @@ class _RegisterScreenState extends State<RegisterScreen> {
           padding: const EdgeInsets.all(EleganSizes.margin),
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is FailureAuthState) {
+              if (state is AuthError) {
                 showSnackBar(context, state.error);
-              } else if (state is SuccessAuthState) {
-                print('Navigating to BottomBarScreen');
-                showSnackBar(
-                  context,
-                  "Giriş Başarili!",
-                );
-                Navigator.pushNamed(context, BottomBarScreen.routeName);
+              } else if (state is Authenticated) {
+                Navigator.pushNamed(context, '/login');
               }
             },
             builder: (context, state) {
-              if (state is LoadingAuthState) {
+              if (state is AuthLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );

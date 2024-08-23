@@ -12,6 +12,13 @@ import 'package:elegan/core/env/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthService {
+  // Save User Data
+  Future<void> saveUserData(String token, User user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('x-auth-token', token);
+    await prefs.setString('user-data', jsonEncode(user.toJson()));
+  }
+
   // Login
   Future<AuthResponse> login({
     required BuildContext context,
@@ -34,15 +41,12 @@ class AuthService {
         response: res,
         context: context,
         onSuccess: () async {
-          SharedPreferences prefs = await SharedPreferences.getInstance();
           final Map<String, dynamic> responseJson = jsonDecode(res.body);
           final String? token = responseJson['token'];
-          if (token == null) {
+          if (token == null || token.isEmpty) {
             showSnackBar(context, 'Token is null');
             return AuthResponse.failure(error: 'Token is null');
           }
-          print('Token: $token'); // Debug print
-          print('Response body: ${res.body}'); // Debug print
 
           // Ensure that 'user' exists and is of the correct type
           final Map<String, dynamic> userJson = responseJson;
@@ -52,13 +56,11 @@ class AuthService {
             return AuthResponse.failure(error: 'User data is null');
           }
 
-          await prefs.setString('x-auth-token', token);
-          // final User user = User.fromJson(responseJson['user']);
-          // await prefs.setString('user-data', jsonEncode(user.toJson()));
           final User user = User.fromMap(userJson);
+          await saveUserData(token, user);
 
           // Başarılı durumda, AuthResponse.success döndürülüyor.
-          return AuthResponse.success(user: user);
+          return AuthResponse.success(user: user, token: token);
         },
       );
     } catch (e) {
@@ -94,7 +96,13 @@ class AuthService {
 
       http.Response res = await http.post(
         Uri.parse('${Environment.baseUrl}user/register'),
-        body: user.toJson(),
+        body: jsonEncode({
+          'firstName': firstName,
+          'lastName': lastName,
+          'email': email,
+          'password': password,
+          'mobile': mobile,
+        }),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },

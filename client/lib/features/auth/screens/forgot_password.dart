@@ -46,7 +46,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     return Scaffold(
       body: BlocBuilder<AuthBloc, AuthState>(
         builder: (context, state) {
-          if (state is SuccessAuthState) {
+          if (state is Authenticated) {
             return const LoginScreen();
           } else {
             return SafeArea(

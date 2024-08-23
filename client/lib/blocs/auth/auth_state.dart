@@ -6,18 +6,38 @@ abstract class AuthState {}
 
 class AuthInitial extends AuthState {}
 
+class AuthLoading extends AuthState {}
+
 class LogOutState extends AuthState {}
 
-class SuccessAuthState extends AuthState {
+class Authenticated extends AuthState {
   final User user;
 
-  SuccessAuthState({required this.user});
+  Authenticated({required this.user});
 }
 
-class LoadingAuthState extends AuthState {}
+class NotAuthenticated extends AuthState {
+  final String? errorMessage;
 
-class FailureAuthState extends AuthState {
+  NotAuthenticated({this.errorMessage});
+}
+
+class AuthError extends AuthState {
   final String error;
 
-  FailureAuthState({required this.error});
+  AuthError({required this.error});
+}
+
+class RefreshTokenLoadingState extends AuthState {}
+
+class RefreshTokenSuccessState extends AuthState {
+  final String newToken;
+
+  RefreshTokenSuccessState({required this.newToken});
+}
+
+class RefreshTokenFailureState extends AuthState {
+  final String error;
+
+  RefreshTokenFailureState({required this.error});
 }

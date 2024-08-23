@@ -9,6 +9,8 @@ class GetUserEvent extends UserEvent {
   GetUserEvent({required this.context});
 }
 
+class GetAllUsersEvent extends UserEvent {}
+
 class UpdateUserEvent extends UserEvent {
   final User user;
 
@@ -16,3 +18,15 @@ class UpdateUserEvent extends UserEvent {
 }
 
 class DeleteUserEvent extends UserEvent {}
+
+class BlockUserEvent extends UserEvent {
+  final String userId;
+
+  BlockUserEvent({required this.userId});
+}
+
+class UnblockUserEvent extends UserEvent {
+  final String userId;
+
+  UnblockUserEvent({required this.userId});
+}

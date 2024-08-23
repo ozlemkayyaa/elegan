@@ -17,12 +17,13 @@ class UserService {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? token = prefs.getString('x-auth-token');
 
-      if (token == null) {
-        prefs.setString('x-auth-token', '');
+      if (token == null || token.isEmpty) {
+        showSnackBar(context, 'No token found.');
         throw Exception('No token found.');
       }
 
-      var tokenResponse = await http.post(
+      // Kullanıcı verilerini almak için HTTP GET isteği gönder.
+      http.Response res = await http.get(
         Uri.parse('${Environment.baseUrl}user/getUser'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
@@ -30,31 +31,37 @@ class UserService {
         },
       );
 
-      var authResponse = await httpErrorHandle(
-        response: tokenResponse,
+      // httpErrorHandle'ın dönüş türü AuthResponse olacak.
+      AuthResponse authResponse = await httpErrorHandle(
+        response: res,
         context: context,
         onSuccess: () async {
-          // Kullanıcı verilerini almak için HTTP GET isteği gönder.
-          http.Response userRes = await http.get(
-            Uri.parse(Environment.baseUrl),
-            headers: <String, String>{
-              'Content-Type': 'application/json; charset=UTF-8',
-              'x-auth-token': token
-            },
-          );
-
           // Kullanıcı verilerini JSON'dan ayrıştır ve User nesnesine çevir.
-          return AuthResponse.success(
-            user: User.fromJson(jsonDecode(userRes.body)),
-          );
+          User user = User.fromJson(jsonDecode(res.body));
+
+          // Kullanıcı verilerini yerel depolamaya kaydet.
+          await saveUserData(user);
+
+          // Başarılı AuthResponse döndür.
+          return AuthResponse.success(user: user, token: token);
         },
       );
 
-      // AuthResponse'tan User nesnesini al ve geri döndür.
-      return authResponse.user!;
+      // AuthResponse'tan User nesnesini çıkarıp geri döndür.
+      if (authResponse.isSuccess && authResponse.user != null) {
+        return authResponse.user!;
+      } else {
+        throw Exception('Failed to load user data.');
+      }
     } catch (e) {
       showSnackBar(context, 'An error occurred. Please try again.');
       throw Exception('Failed to load user data.');
     }
+  }
+
+  // Kullanıcı verilerini yerel depolamaya kaydeden yardımcı fonksiyon
+  Future<void> saveUserData(User user) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('user-data', jsonEncode(user.toJson()));
   }
 }

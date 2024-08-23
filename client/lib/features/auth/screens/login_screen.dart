@@ -72,19 +72,16 @@ class _LoginScreenState extends State<LoginScreen> {
           padding: const EdgeInsets.all(EleganSizes.margin),
           child: BlocConsumer<AuthBloc, AuthState>(
             listener: (context, state) {
-              if (state is FailureAuthState) {
+              if (state is AuthError) {
                 showSnackBar(context, state.error);
-              } else if (state is SuccessAuthState) {
-                print('Navigating to BottomBarScreen');
-                showSnackBar(
-                  context,
-                  "Giriş Başarili!",
-                );
-                Navigator.pushNamed(context, BottomBarScreen.routeName);
+              } else if (state is Authenticated) {
+                Navigator.pushReplacementNamed(
+                    context, BottomBarScreen.routeName,
+                    arguments: "Login Successful!");
               }
             },
             builder: (context, state) {
-              if (state is LoadingAuthState) {
+              if (state is AuthLoading) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
