@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 abstract class AuthEvent {}
@@ -32,8 +33,14 @@ class LoginEvent extends AuthEvent {
   });
 }
 
-class LogOutEvent extends AuthEvent {}
+class LogoutEvent extends AuthEvent {
+  final BuildContext context;
 
-class CheckLoginEvent extends AuthEvent {}
+  LogoutEvent({required this.context});
+}
 
-class RefreshTokenEvent extends AuthEvent {}
+class CheckLoginEvent extends AuthEvent {
+  final BuildContext context;
+
+  CheckLoginEvent({required this.context});
+}

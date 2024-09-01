@@ -8,7 +8,7 @@ class AuthInitial extends AuthState {}
 
 class AuthLoading extends AuthState {}
 
-class LogOutState extends AuthState {}
+class LogoutState extends AuthState {}
 
 class Authenticated extends AuthState {
   final User user;

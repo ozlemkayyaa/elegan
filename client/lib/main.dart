@@ -1,4 +1,5 @@
 import 'package:elegan/blocs/auth/auth_bloc.dart';
+import 'package:elegan/blocs/auth/auth_event.dart';
 import 'package:elegan/blocs/user/user_bloc.dart';
 import 'package:elegan/blocs/user/user_state.dart';
 import 'package:elegan/core/routers/router.dart';
@@ -28,8 +29,8 @@ class _MyAppState extends State<MyApp> {
     return MultiBlocProvider(
       providers: [
         BlocProvider(
-          create: (context) => AuthBloc(AuthService()),
-        ),
+            create: (context) => AuthBloc(AuthService())
+              ..add(CheckLoginEvent(context: context))),
         BlocProvider(
           create: (context) => UserBloc(UserService()),
         ),

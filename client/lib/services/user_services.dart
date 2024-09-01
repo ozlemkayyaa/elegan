@@ -18,6 +18,7 @@ class UserService {
       String? token = prefs.getString('x-auth-token');
 
       if (token == null || token.isEmpty) {
+        prefs.setString('x-auth-token', '');
         showSnackBar(context, 'No token found.');
         throw Exception('No token found.');
       }

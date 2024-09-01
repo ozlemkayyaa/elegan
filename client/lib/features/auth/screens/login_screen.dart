@@ -67,48 +67,45 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(EleganSizes.margin),
-          child: BlocConsumer<AuthBloc, AuthState>(
-            listener: (context, state) {
-              if (state is AuthError) {
-                showSnackBar(context, state.error);
-              } else if (state is Authenticated) {
-                Navigator.pushReplacementNamed(
-                    context, BottomBarScreen.routeName,
-                    arguments: "Login Successful!");
-              }
-            },
-            builder: (context, state) {
-              if (state is AuthLoading) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-              return SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 80),
-                    const TopMessage(
-                      welcomeText: EleganTexts.welcome,
-                      messageText: EleganTexts.loginMessage,
-                    ),
-                    const SizedBox(height: 30),
-                    loginForm(context),
-                    const SizedBox(height: 330),
-                    const SubMessage(
-                      account: EleganTexts.dontAccount,
-                      buttonText: EleganTexts.register,
-                      routeName: RegisterScreen.routeName,
-                    ),
-                  ],
-                ),
-              );
-            },
-          ),
-        ),
+      body: BlocConsumer<AuthBloc, AuthState>(
+        listener: (context, state) {
+          if (state is AuthError) {
+            showSnackBar(context, state.error);
+          } else if (state is Authenticated) {
+            Navigator.pushReplacementNamed(context, BottomBarScreen.routeName,
+                arguments: "Login Successful!");
+          }
+        },
+        builder: (context, state) {
+          if (state is AuthLoading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          return SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(EleganSizes.margin),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 80),
+                  const TopMessage(
+                    welcomeText: EleganTexts.welcome,
+                    messageText: EleganTexts.loginMessage,
+                  ),
+                  const SizedBox(height: 30),
+                  loginForm(context),
+                  const SizedBox(height: 330),
+                  const SubMessage(
+                    account: EleganTexts.dontAccount,
+                    buttonText: EleganTexts.register,
+                    routeName: RegisterScreen.routeName,
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
