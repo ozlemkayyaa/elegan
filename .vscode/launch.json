@@ -1,0 +1,29 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "client",
+            "cwd": "client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "debug",
+            "deviceId": "YOUR_DEVICE_ID" 
+        },
+        {
+            "name": "client (profile mode)",
+            "cwd": "client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "profile",
+            "deviceId": "YOUR_DEVICE_ID"
+        },
+        {
+            "name": "client (release mode)",
+            "cwd": "client",
+            "request": "launch",
+            "type": "dart",
+            "flutterMode": "release",
+            "deviceId": "YOUR_DEVICE_ID"
+        }
+    ]
+}
